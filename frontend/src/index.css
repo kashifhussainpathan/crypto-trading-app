@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.modal-container {
+  animation: modal-appear 0.3s ease-in-out;
+}
+
+.modal-container.hide {
+  animation: modal-disappear 0.3s ease-in-out;
+}
+
+@keyframes modal-appear {
+  from {
+    transform: translateY(-5%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes modal-disappear {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-5%);
+    opacity: 0;
+  }
+}
+
+.modal-content {
+  background-color: white;
+  color: #3b4043;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1ea;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #d2d2d2;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
