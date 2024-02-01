@@ -1,19 +1,19 @@
 import Modal from "../modal";
-import { CircleDashed, X } from "lucide-react";
+import { X } from "lucide-react";
+import { useState } from "react";
+import LiveProfit from "./liveProfit";
+import CloseOrder from "./closeOrder";
 import {
   useGetOrdersQuery,
   useRemoveOrderMutation,
 } from "../../features/orders/orderSlice";
-import CloseOrder from "./closeOrder";
-import { useState } from "react";
-import LiveProfit from "./liveProfit";
 import { IOrder } from "../../models/order.type";
 
 const Orders = () => {
   const [selectedOrder, setSelectedOrder] = useState<IOrder | null>(null);
 
   const { data: orders } = useGetOrdersQuery();
-  const [removeOrder, { isLoading }] = useRemoveOrderMutation();
+  const [removeOrder] = useRemoveOrderMutation();
 
   const onModalClose = (): void => {
     setSelectedOrder(null);
@@ -30,7 +30,7 @@ const Orders = () => {
   return (
     <section className="w-full px-[55px]">
       <div className="w-full">
-        <h3 className="p-2 font-semibold text-lg">ORDERS:</h3>
+        <h3 className="p-2 font-semibold text-lg tracking-wide">ORDERS:</h3>
 
         <table className="w-full border-collapse border text-center">
           <thead className="bg-gray-100">
@@ -70,9 +70,6 @@ const Orders = () => {
                       key={order._id}
                     />
                     <td>
-                      {isLoading && (
-                        <CircleDashed className="h-5 cursor-pointer" />
-                      )}
                       <X
                         className="h-5 cursor-pointer"
                         onClick={() => handleRemoveOrder(order?._id)}

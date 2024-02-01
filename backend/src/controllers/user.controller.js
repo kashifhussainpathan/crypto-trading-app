@@ -301,9 +301,17 @@ const removeOrder = asyncHandler(async (req, res) => {
   const { orderId } = req.params;
   const user = await User.findById(req.user?._id);
 
-  const updatedOrders = user.orders.filter(({ _id }) => _id === orderId);
+  const updatedOrders = user.orders.filter(
+    ({ _id }) => _id.toString() !== orderId.toString()
+  );
 
-  console.log(orderId, updatedOrders);
+  user.orders = updatedOrders;
+
+  await user.save({ validateBeforeSave: false });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Order removed successfully"));
 });
 
 export {
