@@ -24,7 +24,7 @@ router.route("/refresh-token").post(refreshAccessToken);
 router.route("/current-user").get(verifyJWT, getCurrentUser);
 router.route("/order").post(verifyJWT, addOrder);
 router.route("/order").get(verifyJWT, getOrders);
-router.route("/order/:orderId").delete(verifyJWT, removeOrder);
+router.route("/order").patch(verifyJWT, removeOrder);
 router.route("/order/:orderId").patch(verifyJWT, updateOrder);
 
 export default router;
