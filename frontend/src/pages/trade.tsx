@@ -11,6 +11,7 @@ const Trade = () => {
       asset === "USDT" ? "usdtusd" : `BINANCE:${asset.toLowerCase()}usdt`;
     setAsset(coinName);
   };
+
   return (
     <section className="grid grid-cols-main">
       <Assets onCoinClick={handleAssetClick} />
