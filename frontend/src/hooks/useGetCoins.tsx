@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
-import { Coin } from "../models/coin.type";
+import { IAsset } from "../models/assets.type";
 
 const useGetCoins = () => {
-  const [coinData, setCoinData] = useState<Coin[]>([]);
+  const [coinData, setCoinData] = useState<IAsset[]>([]);
 
   useEffect(() => {
     fetch("https://api.coincap.io/v2/assets")
       .then((response) => response.json())
       .then((data) => {
         const sortedData = data.data.sort(
-          (a: Coin, b: Coin) => +b.volumeUsd24Hr - +a.volumeUsd24Hr
+          (a: IAsset, b: IAsset) => +b.volumeUsd24Hr - +a.volumeUsd24Hr
         );
         setCoinData(sortedData);
       })

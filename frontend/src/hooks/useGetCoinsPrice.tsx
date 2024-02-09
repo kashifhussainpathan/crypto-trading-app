@@ -7,7 +7,6 @@ const useGetCoinsPrice = () => {
 
   const [highlightedRows, setHighlightedRows] = useState<string[]>([]);
   const [coinPrices, setCoinPrices] = useState<Record<string, number>>({});
-  const [prevPrices, setPrevPrices] = useState<Record<string, number>>({});
 
   useEffect(() => {
     const pricesWs = new WebSocket("wss://ws.coincap.io/prices?assets=ALL");
@@ -15,30 +14,13 @@ const useGetCoinsPrice = () => {
     pricesWs.onmessage = function (event) {
       const data = JSON.parse(event.data);
 
-      setPrevPrices((prev) => {
-        const updatedPrev = { ...prev };
-        for (const symbol in data) {
-          updatedPrev[symbol.toLowerCase()] =
-            prev[symbol.toLowerCase()] || data[symbol.toLowerCase()];
-        }
-
-        return updatedPrev;
-      });
-
       setCoinPrices((prevPrices) => ({ ...prevPrices, ...data }));
 
       dispatch(setLivePrices(data));
 
       const updatedHighlightedRows = [];
       for (const symbol in data) {
-        const currentPrice = parseFloat(data[symbol]);
-        const prevPrice = prevPrices[symbol] || 0;
-
-        if (currentPrice > prevPrice) {
-          updatedHighlightedRows.push(`${symbol}-green`);
-        } else if (currentPrice < prevPrice) {
-          updatedHighlightedRows.push(`${symbol}-red`);
-        }
+        updatedHighlightedRows.push(symbol);
       }
       setHighlightedRows(updatedHighlightedRows);
 
@@ -50,7 +32,7 @@ const useGetCoinsPrice = () => {
     return () => {
       pricesWs.close();
     };
-  }, [prevPrices]);
+  }, [coinPrices]);
 
   return { highlightedRows, coinPrices };
 };
