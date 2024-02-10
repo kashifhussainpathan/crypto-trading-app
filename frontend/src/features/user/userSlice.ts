@@ -34,11 +34,11 @@ interface LoginResponse {
   success: boolean;
 }
 
-const BASE_URL = `${import.meta.env.VITE_BASE_URL}/api/v1/users`;
-
 export const userApi = createApi({
   reducerPath: "user",
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: "https://coinbase-backend-rouge.vercel.app/api/v1/users",
+  }),
 
   tagTypes: ["user"],
 
