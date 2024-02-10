@@ -1,31 +1,96 @@
 import Modal from "../modal";
-import { X } from "lucide-react";
-import { useState } from "react";
-import LiveProfit from "./liveProfit";
-import CloseOrder from "./closeOrder";
+import { Edit, X } from "lucide-react";
+import { FC, useCallback, useEffect, useState } from "react";
+import UpdateOrder from "./updateOrder";
+import { Socket } from "socket.io-client";
+import useGetAssetsState from "../../hooks/useGetAssetsState";
+import { calculateProfit, getProfit } from "../../utils/ordersUtils";
+import { IOrder, OrderWithLivePrice } from "../../models/order.type";
 import {
   useGetOrdersQuery,
   useRemoveOrderMutation,
 } from "../../features/orders/orderSlice";
-import { IOrder } from "../../models/order.type";
 
-const Orders = () => {
+interface IOrders {
+  socket: Socket;
+}
+
+const Orders: FC<IOrders> = ({ socket }) => {
+  const [profits, setProfits] = useState<Record<string, number>>({});
   const [selectedOrder, setSelectedOrder] = useState<IOrder | null>(null);
+  const [triggeredOrders, setTriggeredOrders] = useState<OrderWithLivePrice[]>(
+    []
+  );
 
-  const { data: orders } = useGetOrdersQuery();
+  const { refetch, data: orders } = useGetOrdersQuery();
+
   const [removeOrder] = useRemoveOrderMutation();
+
+  const handleRemoveOrder = useCallback(async (id: string, profit: number) => {
+    try {
+      await removeOrder({ id, profit });
+    } catch (error) {
+      console.log("Failed to close order", error);
+    }
+  }, []);
 
   const onModalClose = (): void => {
     setSelectedOrder(null);
   };
 
-  const handleRemoveOrder = async (id: string) => {
-    try {
-      await removeOrder(id);
-    } catch (error) {
-      console.log("Failed to close order", error);
-    }
-  };
+  const { livePrices } = useGetAssetsState();
+
+  useEffect(() => {
+    const updatedProfits: Record<string, number> = {};
+    const triggeredOrders: OrderWithLivePrice[] = [];
+
+    orders?.forEach((order: IOrder) => {
+      const { _id, name, takeProfit, stopLoss, direction } = order;
+
+      const livePrice = livePrices[name.toLowerCase()];
+      const profit = calculateProfit(order, livePrice);
+      updatedProfits[_id] = profit;
+
+      if (livePrice !== undefined) {
+        if (direction === "Buy") {
+          if (livePrice >= +takeProfit && takeProfit > 0) {
+            triggeredOrders.push({ ...order, livePrice });
+          } else if (livePrice <= +stopLoss && stopLoss > 0) {
+            triggeredOrders.push({ ...order, livePrice });
+          }
+        } else if (direction === "Sell") {
+          if (livePrice <= +stopLoss && stopLoss > 0) {
+            triggeredOrders.push({ ...order, livePrice });
+          } else if (livePrice >= +takeProfit && takeProfit > 0) {
+            triggeredOrders.push({ ...order, livePrice });
+          }
+        }
+      }
+    });
+
+    setProfits(updatedProfits);
+    setTriggeredOrders(triggeredOrders);
+  }, [livePrices, orders]);
+
+  useEffect(() => {
+    if (!socket || !triggeredOrders.length) return;
+
+    socket.on("connect", () => {
+      console.log("Connected to Socket Server");
+    });
+
+    const token = localStorage.getItem("accessToken");
+
+    console.log(triggeredOrders);
+
+    socket.emit("triggered_orders", { token, orders: triggeredOrders });
+    setTriggeredOrders([]);
+    refetch();
+
+    return () => {
+      socket.off("triggered_orders");
+    };
+  }, [socket, triggeredOrders]);
 
   return (
     <section className="w-full px-[55px]">
@@ -41,16 +106,20 @@ const Orders = () => {
               <td className="py-2 font-medium">Take Profit</td>
               <td className="py-2 font-medium">Stop Loss</td>
               <td className="py-2 font-medium">Floating Profit</td>
-              <td className="py-2 font-medium"></td>
+              <td className="py-2 font-medium">Manage</td>
             </tr>
           </thead>
 
           <tbody>
             {orders?.length! > 0 ? (
               orders?.map((order: IOrder) => {
-                const { symbol, direction, lots, takeProfit, stopLoss } = order;
+                const { _id, symbol, direction, lots, takeProfit, stopLoss } =
+                  order;
+
+                const profit = getProfit(_id, profits);
+
                 return (
-                  <tr className="border-b" key={order._id}>
+                  <tr className="border-b" key={_id}>
                     <td className="py-1 font-medium text-sm">{symbol}</td>
                     <td
                       className={`py-1 font-medium ${
@@ -64,16 +133,28 @@ const Orders = () => {
                     </td>
                     <td className="py-1">{takeProfit}</td>
                     <td className="py-1">{stopLoss}</td>
-                    <LiveProfit
-                      orders={orders}
-                      id={order?._id}
-                      key={order._id}
-                    />
+                    <td
+                      className={`py-1 font-medium ${
+                        profit > 0 && "text-green-600"
+                      } ${profit < 0 && "text-red-600"}`}
+                    >
+                      {profit >= 0
+                        ? `$${parseFloat(profit.toString()).toFixed(2)}`
+                        : `-$${Math.abs(parseFloat(profit.toString())).toFixed(
+                            2
+                          )}`}
+                    </td>
                     <td>
-                      <X
-                        className="h-5 cursor-pointer"
-                        onClick={() => handleRemoveOrder(order?._id)}
-                      />
+                      <div className="flex items-center justify-center gap-2">
+                        <Edit
+                          className="h-4 cursor-pointer"
+                          onClick={() => setSelectedOrder(order)}
+                        />
+                        <X
+                          className="h-5 cursor-pointer"
+                          onClick={() => handleRemoveOrder(_id, profit)}
+                        />
+                      </div>
                     </td>
                   </tr>
                 );
@@ -91,7 +172,7 @@ const Orders = () => {
 
       {selectedOrder && (
         <Modal onClose={onModalClose}>
-          <CloseOrder />
+          <UpdateOrder order={selectedOrder} onModalClose={onModalClose} />
         </Modal>
       )}
     </section>
