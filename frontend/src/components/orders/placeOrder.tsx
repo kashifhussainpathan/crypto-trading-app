@@ -71,7 +71,7 @@ const PlaceOrder: FC<IPlaceOrder> = ({ asset, onModalClose }) => {
 
       <hr className="my-1" />
 
-      {/* Coin name */}
+      {/* asset name */}
       <div className="my-2 font-medium flex gap-1 items-center">
         <img
           src={`https://assets.coincap.io/assets/icons/${asset.symbol.toLowerCase()}@2x.png`}
@@ -85,7 +85,7 @@ const PlaceOrder: FC<IPlaceOrder> = ({ asset, onModalClose }) => {
       <div className="w-full mx-auto bg-gray-100 rounded-md flex items-center h-14 justify-between p-2 font-medium">
         <div
           className={`py-[2px] px-[28px] rounded-md cursor-pointer ${
-            order.direction === "Sell" && "bg-slate-200"
+            order.direction === "Sell" && "bg-gray-200"
           }`}
           onClick={() => handleSetDirection("Sell")}
         >
@@ -94,7 +94,7 @@ const PlaceOrder: FC<IPlaceOrder> = ({ asset, onModalClose }) => {
         </div>
         <div
           className={`py-[2px] px-[28px] rounded-md cursor-pointer ${
-            order.direction === "Buy" && "bg-slate-200"
+            order.direction === "Buy" && "bg-gray-200"
           }`}
           onClick={() => handleSetDirection("Buy")}
         >
@@ -138,7 +138,15 @@ const PlaceOrder: FC<IPlaceOrder> = ({ asset, onModalClose }) => {
         className="w-[100%] mx-auto mt-4 !text-base py-2 bg-gray-800 text-white border-none !font-base"
         onClick={handlePlaceOrder}
       >
-        {isLoading ? "Placing Order.." : "Place Order"}
+        {isLoading ? (
+          <div
+            className="animate-spin inline-block w-4 h-4 border-[3px] border-current border-t-transparent text-gray-400 rounded-full"
+            role="status"
+            aria-label="loading"
+          ></div>
+        ) : (
+          "Place Order"
+        )}
       </Button>
     </div>
   );
