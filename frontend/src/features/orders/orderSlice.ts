@@ -9,10 +9,12 @@ interface IUpdateOrder {
   };
 }
 
+const BASE_URL = `${import.meta.env.BASE_URL}/api/v1/users`;
+
 export const orderApi = createApi({
   reducerPath: "orders",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8000/api/v1/users",
+    baseUrl: BASE_URL,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("accessToken");
       if (token) {

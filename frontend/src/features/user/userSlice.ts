@@ -34,9 +34,11 @@ interface LoginResponse {
   success: boolean;
 }
 
+const BASE_URL = `${import.meta.env.BASE_URL}/api/v1/users`;
+
 export const userApi = createApi({
   reducerPath: "user",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8000/api/v1/users" }),
+  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
 
   tagTypes: ["user"],
 
