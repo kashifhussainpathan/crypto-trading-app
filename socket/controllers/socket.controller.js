@@ -1,9 +1,11 @@
 import axios from "axios";
 
+const BASE_URL = `${process.env.BASE_URL}/api/v1/users/order`;
+
 export const closeOrder = async (id, profit, token) => {
   try {
     await axios.patch(
-      "http://localhost:8000/api/v1/users/order",
+      BASE_URL,
       { id, profit },
       {
         headers: {
