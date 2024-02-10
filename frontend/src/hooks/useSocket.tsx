@@ -5,7 +5,7 @@ const useSocket = () => {
   const [socket, setSocket] = useState<Socket>();
 
   useEffect(() => {
-    const newSocket = io("ws://localhost:3000");
+    const newSocket = io("https://coinbase-socket.onrender.com");
 
     setSocket(newSocket);
 
