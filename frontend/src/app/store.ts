@@ -9,6 +9,6 @@ export const store = configureStore({
     [userApi.reducerPath]: userApi.reducer,
     [orderApi.reducerPath]: orderApi.reducer,
   },
-
+  // @ts-ignore
   middleware: (mid) => [...mid(), userApi.middleware, orderApi.middleware],
 });
