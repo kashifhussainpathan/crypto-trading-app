@@ -1,6 +1,14 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { IOrder } from "../../models/order.type";
 
+interface IUpdateOrder {
+  orderId: string;
+  updatedOrder: {
+    stopLoss: number;
+    takeProfit: number;
+  };
+}
+
 export const orderApi = createApi({
   reducerPath: "orders",
   baseQuery: fetchBaseQuery({
@@ -13,9 +21,11 @@ export const orderApi = createApi({
       return headers;
     },
   }),
+
   tagTypes: ["Orders"],
+
   endpoints: (builder) => ({
-    placeOrder: builder.mutation<IOrder, IOrder>({
+    placeOrder: builder.mutation<void, IOrder>({
       query: (order) => ({
         url: "/order",
         method: "POST",
@@ -24,10 +34,20 @@ export const orderApi = createApi({
       invalidatesTags: ["Orders"],
     }),
 
-    removeOrder: builder.mutation<string, string>({
-      query: (orderId) => ({
+    removeOrder: builder.mutation<void, { id: string; profit: number }>({
+      query: ({ id, profit }) => ({
+        url: `/order`,
+        method: "PATCH",
+        body: { id, profit },
+      }),
+      invalidatesTags: ["Orders"],
+    }),
+
+    updateOrder: builder.mutation<void, IUpdateOrder>({
+      query: ({ orderId, updatedOrder }) => ({
         url: `/order/${orderId}`,
-        method: "DELETE",
+        method: "PATCH",
+        body: updatedOrder,
       }),
       invalidatesTags: ["Orders"],
     }),
@@ -44,4 +64,5 @@ export const {
   useGetOrdersQuery,
   usePlaceOrderMutation,
   useRemoveOrderMutation,
+  useUpdateOrderMutation,
 } = orderApi;
