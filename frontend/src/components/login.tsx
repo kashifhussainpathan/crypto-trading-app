@@ -31,8 +31,8 @@ const Login: FC<ILogin> = ({ navigateAuth }) => {
 
       //@ts-ignore
       const { data } = await login({ email, username, password });
-      localStorage.setItem("accessToken", data.data.accessToken);
-      localStorage.setItem("refreshToken", data.data.refreshToken);
+      localStorage.setItem("accessToken", data?.data?.accessToken);
+      localStorage.setItem("refreshToken", data?.data?.refreshToken);
 
       navigate("/");
     } catch (error) {
