@@ -15,4 +15,6 @@ export interface IAsset {
 export interface IAssetsState {
   livePrices: Record<string, number>;
   assets: IAsset[];
+  totalProfit: number;
+  highlightedRows: string[];
 }

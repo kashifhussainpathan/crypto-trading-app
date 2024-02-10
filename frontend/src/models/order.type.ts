@@ -8,3 +8,7 @@ export interface IOrder {
   stopLoss: number;
   entryPrice: number;
 }
+
+export interface OrderWithLivePrice extends IOrder {
+  livePrice?: number;
+}
