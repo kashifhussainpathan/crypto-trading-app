@@ -1,7 +1,8 @@
+import { useState } from "react";
+import useSocket from "../hooks/useSocket";
 import Orders from "../components/orders/orders";
 import Assets from "../components/assets-components/assets";
 import { AdvancedRealTimeChart } from "react-ts-tradingview-widgets";
-import { useState } from "react";
 
 const Trade = () => {
   const [asset, setAsset] = useState<string>("BINANCE:btcusd");
@@ -11,6 +12,8 @@ const Trade = () => {
       asset === "USDT" ? "usdtusd" : `BINANCE:${asset.toLowerCase()}usdt`;
     setAsset(coinName);
   };
+
+  const socket = useSocket();
 
   return (
     <section className="grid grid-cols-main">
@@ -24,7 +27,8 @@ const Trade = () => {
           interval="5"
           allow_symbol_change={false}
         />
-        <Orders />
+        {/* @ts-ignore */}
+        <Orders socket={socket} />
       </div>
     </section>
   );
