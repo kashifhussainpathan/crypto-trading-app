@@ -22,7 +22,7 @@ const Login: FC<ILogin> = ({ navigateAuth }) => {
     username: "",
   });
 
-  const [login, { isLoading, error }] = useLoginMutation();
+  const [login, { isLoading, error, isSuccess }] = useLoginMutation();
 
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
@@ -34,7 +34,9 @@ const Login: FC<ILogin> = ({ navigateAuth }) => {
       localStorage.setItem("accessToken", data?.data?.accessToken);
       localStorage.setItem("refreshToken", data?.data?.refreshToken);
 
-      navigate("/");
+      if (isSuccess) {
+        navigate("/");
+      }
     } catch (error) {
       console.log(error);
     }
