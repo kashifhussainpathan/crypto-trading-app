@@ -15,6 +15,10 @@ connectDB()
     console.log("MONGO db connection failed !!! ", err);
   });
 
+app.get("/", (req, res) => {
+  res.send("Welcome to Coinbase");
+});
+
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
