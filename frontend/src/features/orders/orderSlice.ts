@@ -9,11 +9,12 @@ interface IUpdateOrder {
   };
 }
 
+const BASE_URL = `${import.meta.env.VITE_BASE_URL}/api/v1/users`;
+
 export const orderApi = createApi({
   reducerPath: "orders",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://coinbase-backend-rouge.vercel.app/api/v1/users",
-
+    baseUrl: BASE_URL,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("accessToken");
       if (token) {
