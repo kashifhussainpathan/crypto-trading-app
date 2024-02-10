@@ -12,19 +12,30 @@ interface InputProps {
 export const signInInputs: InputProps[] = [
   {
     id: 1,
+    name: "username",
+    type: "text",
+    placeholder: "jhon",
+    errorMessage:
+      "Username should be 3-16 characters and shouldn't include any special character!",
+    label: "Username",
+    pattern: "^[A-Za-z0-9]{3,16}$",
+    required: true,
+  },
+  {
+    id: 2,
     name: "email",
     type: "email",
-    placeholder: "Email",
+    placeholder: "Jhon@gmail.com",
     errorMessage: "Please enter a valid email address!",
     label: "Email",
     pattern: "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$",
     required: true,
   },
   {
-    id: 2,
+    id: 3,
     name: "password",
     type: "password",
-    placeholder: "Password",
+    placeholder: "12345",
     errorMessage:
       "Password should be 8-20 characters and include at least 1 letter, 1 number and 1 special character!",
     label: "Password",
