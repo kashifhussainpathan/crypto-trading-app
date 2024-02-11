@@ -1,7 +1,7 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { IUser } from "../../models/user.type";
-import { IUserCard } from "../../components/userCard";
 import { IOrder } from "../../models/order.type";
+import { IUserCard } from "../../components/userCard";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 interface IRefreshTokenResponse {
   refreshToken: string;
@@ -37,7 +37,7 @@ interface LoginResponse {
 export const userApi = createApi({
   reducerPath: "user",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://coinbase-backend-cyy4.onrender.com/api/v1/users",
+    baseUrl: "https://coinbase-backend-kp.vercel.app/api/v1/users",
   }),
 
   tagTypes: ["user"],
