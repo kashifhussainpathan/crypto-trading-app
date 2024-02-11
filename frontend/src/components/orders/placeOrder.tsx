@@ -51,17 +51,21 @@ const PlaceOrder: FC<IPlaceOrder> = ({ asset, onModalClose }) => {
   };
 
   const handlePlaceOrder = async () => {
-    const isLoggedIn = localStorage.getItem("isLogin");
+    const isLoggedIn =
+      localStorage.getItem("refreshToken") &&
+      localStorage.getItem("accessToken");
+
     if (!isLoggedIn) {
       navigate("/profile");
-    }
-    const newOrder = { ...order, entryPrice: price };
-    try {
-      await placeOrder(newOrder);
-      onModalClose();
-    } catch (error) {
-      onModalClose();
-      console.log("Failed to add order", error);
+    } else {
+      const newOrder = { ...order, entryPrice: price };
+      try {
+        await placeOrder(newOrder);
+        onModalClose();
+      } catch (error) {
+        onModalClose();
+        console.log("Failed to add order", error);
+      }
     }
   };
 
