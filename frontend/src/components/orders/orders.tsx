@@ -55,22 +55,23 @@ const Orders: FC<IOrders> = ({ socket }) => {
         if (direction === "Buy") {
           // if live price is greater than take profit eg. livePrice 400 >= takeProfit 410
           if (livePrice >= +takeProfit && takeProfit > 0) {
-            triggeredOrders.push({ ...order, livePrice });
+            triggeredOrders.push({ ...order, profit });
           }
           // if liveprice is less than stoploss eg. livePrice 390 or 389 =< stoploss 390
           else if (livePrice <= +stopLoss && stopLoss > 0) {
-            triggeredOrders.push({ ...order, livePrice });
+            triggeredOrders.push({ ...order, profit });
           }
         }
         // Sell side condition
         else if (direction === "Sell") {
           // if liveprice is greater than stoploss eg. livePrice 401 >= stoploss 400
+          const adjustedProfit = profit < 0 ? profit : -profit;
           if (livePrice >= +stopLoss && stopLoss > 0) {
-            triggeredOrders.push({ ...order, livePrice });
+            triggeredOrders.push({ ...order, profit: adjustedProfit });
           }
           // if liveprice is less than takeprofit eg. livePrice 349 =< takeProfit 350
           else if (livePrice <= +takeProfit && takeProfit > 0) {
-            triggeredOrders.push({ ...order, livePrice });
+            triggeredOrders.push({ ...order, profit });
           }
         }
       }
@@ -79,6 +80,8 @@ const Orders: FC<IOrders> = ({ socket }) => {
     setProfits(updatedProfits);
     setTriggeredOrders(triggeredOrders);
   }, [livePrices, orders]);
+
+  console.log(triggeredOrders);
 
   useEffect(() => {
     if (!socket || !triggeredOrders.length) return;

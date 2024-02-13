@@ -24,7 +24,9 @@ io.on("connection", (socket) => {
   socket.on("triggered_orders", async ({ token, orders }) => {
     try {
       for (const order of orders) {
-        const { _id, livePrice: profit } = order;
+        const { _id, profit } = order;
+
+        console.log(profit);
 
         if (!_id || !profit || !token) {
           console.log("Empty Order");
