@@ -53,15 +53,23 @@ const Orders: FC<IOrders> = ({ socket }) => {
 
       if (livePrice !== undefined) {
         if (direction === "Buy") {
+          // if live price is greater than take profit eg. livePrice 400 >= takeProfit 410
           if (livePrice >= +takeProfit && takeProfit > 0) {
             triggeredOrders.push({ ...order, livePrice });
-          } else if (livePrice <= +stopLoss && stopLoss > 0) {
+          }
+          // if liveprice is less than stoploss eg. livePrice 390 or 389 =< stoploss 390
+          else if (livePrice <= +stopLoss && stopLoss > 0) {
             triggeredOrders.push({ ...order, livePrice });
           }
-        } else if (direction === "Sell") {
-          if (livePrice <= +stopLoss && stopLoss > 0) {
+        }
+        // Sell side condition
+        else if (direction === "Sell") {
+          // if liveprice is greater than stoploss eg. livePrice 401 >= stoploss 400
+          if (livePrice >= +stopLoss && stopLoss > 0) {
             triggeredOrders.push({ ...order, livePrice });
-          } else if (livePrice >= +takeProfit && takeProfit > 0) {
+          }
+          // if liveprice is less than takeprofit eg. livePrice 349 =< takeProfit 350
+          else if (livePrice <= +takeProfit && takeProfit > 0) {
             triggeredOrders.push({ ...order, livePrice });
           }
         }
@@ -80,8 +88,6 @@ const Orders: FC<IOrders> = ({ socket }) => {
     });
 
     const token = localStorage.getItem("accessToken");
-
-    console.log(triggeredOrders);
 
     socket.emit("triggered_orders", { token, orders: triggeredOrders });
     setTriggeredOrders([]);
