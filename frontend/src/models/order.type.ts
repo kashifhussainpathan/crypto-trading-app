@@ -10,5 +10,5 @@ export interface IOrder {
 }
 
 export interface OrderWithLivePrice extends IOrder {
-  livePrice?: number;
+  profit?: number;
 }
