@@ -81,7 +81,7 @@ const Orders: FC<IOrders> = ({ socket }) => {
     setTriggeredOrders(triggeredOrders);
   }, [livePrices, orders]);
 
-  console.log(triggeredOrders);
+ 
 
   useEffect(() => {
     if (!socket || !triggeredOrders.length) return;
